@@ -3,12 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/pkg/term"
-	"strings"
+	"log"
 	"os"
 	"os/exec"
 	"runtime"
-  "log"
+	"strings"
 
 	huh "github.com/charmbracelet/huh"
 
@@ -19,19 +18,6 @@ import (
 var name string
 
 // Code from Stack Overflow
-func getch() []byte {
-	t, _ := term.Open("/dev/tty")
-	term.RawMode(t)
-	bytes := make([]byte, 3)
-	numRead, err := t.Read(bytes)
-	t.Restore()
-	t.Close()
-	if err != nil {
-		return nil
-	}
-	return bytes[0:numRead]
-}
-
 var clear map[string]func() //create a map for storing clear funcs
 
 func init() {
@@ -56,36 +42,58 @@ func CallClear() {
 		panic("Your platform is unsupported! I can't clear terminal screen :( \nPlease make an issue.")
 	}
 }
+
 // End of Stack Overflow Code
 
-func Pause() {
-  guh := func ()  {
-    var char rune
-    _, err := fmt.Scanf("%c", &char)
-    if err != nil {
-        log.Fatal(err)
+func huhtest() {
+  fmt.Println("huh?")
+  Pause()
+}
+
+func optionsMenu() {
+	goback := false
+
+	for !goback {
+		CallClear()
+
+		style := lipgloss.NewStyle().
+			SetString("OPTIONS").
+			Padding(1).
+			Border(lipgloss.NormalBorder(), true).
+			Align(lipgloss.Center)
+
+		fmt.Println(style)
+		fmt.Println("")
+
+		var menu string
+		huh.NewSelect[string]().
+			Options(
+				huh.NewOption("Set Name", "sn"),
+				huh.NewOption("huh test", "ht"),
+				huh.NewOption("Go Back", "exit"),
+			).
+			Height(6).
+			Value(&menu).Run()
+
+		if menu == "exit" {
+			goback = true
+		} else if menu == "sn" {
+			SetName()
+
+			style = lipgloss.NewStyle().SetString(fmt.Sprintf("Your name is now %v.", name)).Bold(true)
+
+			fmt.Println(style)
+
+      Pause()
+		} else if menu == "ht" {
+      huhtest()
     }
-  }
+	}
 
-  fmt.Println("")
-  _ = spinner.New().Title("Press any key to continue...").Action(guh).Run()
+	mainMenu()
 }
 
-
-func RoomTemplate() {
-	fmt.Println("ho")
-}
-
-func main() {
-	style := lipgloss.NewStyle().
-		SetString("INSERT RANDOMNESS").
-		Padding(1).
-		Border(lipgloss.ThickBorder(), true, true).
-		Align(lipgloss.Center)
-
-	fmt.Println(style)
-	fmt.Println("")
-
+func SetName() {
 	huh.NewInput().
 		Title("What's your name?").
 		Description("This will be your character's name in the game.").
@@ -98,10 +106,74 @@ func main() {
 			}
 			return nil
 		}).Run()
+}
 
-  style = lipgloss.NewStyle().SetString(fmt.Sprintf("Your name is now %v.", name)).Bold(true)
+func Pause() {
+	guh := func() {
+		var char rune
+		_, err := fmt.Scanf("%c", &char)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 
-  fmt.Println(style)
+	fmt.Println("")
+	_ = spinner.New().Title("Press any key to continue...").Action(guh).Run()
+}
 
-  Pause()
+func RoomTemplate() {
+	fmt.Println("ho")
+}
+
+func mainMenu() {
+	CallClear()
+
+	style := lipgloss.NewStyle().
+		SetString("MAIN MENU").
+		Padding(1).
+		Border(lipgloss.NormalBorder(), true).
+		Align(lipgloss.Center)
+
+	fmt.Println(style)
+	fmt.Println("")
+
+	var menu string
+	huh.NewSelect[string]().
+		Options(
+			huh.NewOption("Start Game", "sg"),
+			huh.NewOption("Options", "o"),
+			huh.NewOption("Exit", "exit"),
+		).
+		Height(6).
+		Value(&menu).Run()
+
+	if menu == "sg" {
+		RoomTemplate()
+	} else if menu == "o" {
+		optionsMenu()
+	} else if menu == "exit" {
+		CallClear()
+		os.Exit(0)
+	}
+}
+
+func main() {
+	style := lipgloss.NewStyle().
+		SetString("INSERT RANDOMNESS").
+		Padding(1).
+		Border(lipgloss.ThickBorder(), true, true).
+		Align(lipgloss.Center)
+
+	fmt.Println(style)
+	fmt.Println("")
+
+	SetName()
+
+	style = lipgloss.NewStyle().SetString(fmt.Sprintf("Your name is now %v.", name)).Bold(true)
+
+	fmt.Println(style)
+
+	Pause()
+
+	mainMenu()
 }
