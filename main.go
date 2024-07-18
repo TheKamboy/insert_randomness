@@ -45,6 +45,19 @@ func CallClear() {
 
 // End of Stack Overflow Code
 
+func convertToSymb(symbol rune) string {
+  symb := symbol
+  foreground := lipgloss.Color("grey")
+
+  if symb == 'O' {
+    symb = ''
+  }
+
+  style := lipgloss.NewStyle().Foreground(foreground)
+
+  return style.Render(string(symb))
+}
+
 func huhtest() {
   fmt.Println("huh?")
   Pause()
@@ -57,7 +70,7 @@ func optionsMenu() {
 		CallClear()
 
 		style := lipgloss.NewStyle().
-			SetString("OPTIONS").
+			SetString(fmt.Sprintf("%v OPTIONS", convertToSymb('O'))).
 			Padding(1).
 			Border(lipgloss.NormalBorder(), true).
 			Align(lipgloss.Center)
