@@ -46,21 +46,21 @@ func CallClear() {
 // End of Stack Overflow Code
 
 func convertToSymb(symbol rune) string {
-  symb := symbol
-  foreground := lipgloss.Color("grey")
+	symb := symbol
+	foreground := lipgloss.Color("grey")
 
-  if symb == 'O' {
-    symb = ''
-  }
+	if symb == 'O' {
+		symb = ''
+	}
 
-  style := lipgloss.NewStyle().Foreground(foreground)
+	style := lipgloss.NewStyle().Foreground(foreground)
 
-  return style.Render(string(symb))
+	return style.Render(string(symb))
 }
 
 func huhtest() {
-  fmt.Println("huh?")
-  Pause()
+	fmt.Println("huh?")
+	Pause()
 }
 
 func optionsMenu() {
@@ -97,10 +97,10 @@ func optionsMenu() {
 
 			fmt.Println(style)
 
-      Pause()
+			Pause()
 		} else if menu == "ht" {
-      huhtest()
-    }
+			huhtest()
+		}
 	}
 
 	mainMenu()
