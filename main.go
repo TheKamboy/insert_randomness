@@ -15,7 +15,10 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+// Character Name
 var name string
+
+// Inventory Variables
 
 // Code from Stack Overflow
 var clear map[string]func() //create a map for storing clear funcs
@@ -131,7 +134,9 @@ func Pause() {
 	}
 
 	fmt.Println("")
-	_ = spinner.New().Title("Press any key to continue...").Action(guh).Run()
+
+	// damn charm got lazy with the adaptive colors
+	_ = spinner.New().TitleStyle(lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "#00020A", Dark: "#FFFDF5"})).Title("Press any key to continue...").Action(guh).Run()
 }
 
 func RoomTemplate() {
