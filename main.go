@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"golang.org/x/term"
 	"log"
 	"os"
 	"os/exec"
@@ -15,10 +16,16 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+// debug mode will auto set name, and other things to make it quicker to test
+const DEBUG = true
+
 // Character Name
 var name string
 
 // Inventory Variables
+
+// Terminal Sizing
+var termWidth = 0
 
 // Code from Stack Overflow
 var clear map[string]func() //create a map for storing clear funcs
@@ -61,6 +68,16 @@ func convertToSymb(symbol rune) string {
 	return style.Render(string(symb))
 }
 
+func debugMsg() {
+	var style = lipgloss.NewStyle().
+		Width(termWidth).
+		Align(lipgloss.Center)
+
+	if DEBUG {
+		fmt.Println(style.Render("DEBUG MODE"))
+	}
+}
+
 func huhtest() {
 	fmt.Println("huh?")
 	Pause()
@@ -71,6 +88,7 @@ func optionsMenu() {
 
 	for !goback {
 		CallClear()
+		debugMsg()
 
 		style := lipgloss.NewStyle().
 			SetString(fmt.Sprintf("%v OPTIONS", convertToSymb('O'))).
@@ -145,6 +163,7 @@ func RoomTemplate() {
 
 func mainMenu() {
 	CallClear()
+	debugMsg()
 
 	style := lipgloss.NewStyle().
 		SetString("MAIN MENU").
@@ -176,6 +195,14 @@ func mainMenu() {
 }
 
 func main() {
+	w, _, e := term.GetSize(int(os.Stdin.Fd()))
+
+	if e != nil {
+		log.Fatalln(e)
+	}
+
+	termWidth = w
+
 	style := lipgloss.NewStyle().
 		SetString("INSERT RANDOMNESS").
 		Padding(1).
@@ -185,13 +212,17 @@ func main() {
 	fmt.Println(style)
 	fmt.Println("")
 
-	SetName()
+	if !DEBUG {
+		SetName()
 
-	style = lipgloss.NewStyle().SetString(fmt.Sprintf("Your name is now %v.", name)).Bold(true)
+		style = lipgloss.NewStyle().SetString(fmt.Sprintf("Your name is now %v.", name)).Bold(true)
 
-	fmt.Println(style)
+		fmt.Println(style)
 
-	Pause()
+		Pause()
+	} else {
+		name = "Debug"
+	}
 
 	mainMenu()
 }
