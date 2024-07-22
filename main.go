@@ -57,7 +57,7 @@ func CallClear() {
 
 func convertToSymb(symbol rune) string {
 	symb := symbol
-	foreground := lipgloss.Color("grey")
+	foreground := lipgloss.Color("8")
 
 	if symb == 'O' {
 		symb = ''
@@ -69,9 +69,7 @@ func convertToSymb(symbol rune) string {
 }
 
 func debugMsg() {
-	var style = lipgloss.NewStyle().
-		Width(termWidth).
-		Align(lipgloss.Center)
+	var style = lipgloss.NewStyle()
 
 	if DEBUG {
 		fmt.Println(style.Render("DEBUG MODE"))
