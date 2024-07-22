@@ -91,7 +91,7 @@ func optionsMenu() {
 		style := lipgloss.NewStyle().
 			SetString(fmt.Sprintf("%v OPTIONS", convertToSymb('O'))).
 			Padding(1).
-			Border(lipgloss.NormalBorder(), true).
+			Border(lipgloss.RoundedBorder(), true).
 			Align(lipgloss.Center)
 
 		fmt.Println(style)
@@ -166,7 +166,7 @@ func mainMenu() {
 	style := lipgloss.NewStyle().
 		SetString("MAIN MENU").
 		Padding(1).
-		Border(lipgloss.NormalBorder(), true).
+		Border(lipgloss.RoundedBorder(), true).
 		Align(lipgloss.Center)
 
 	fmt.Println(style)
