@@ -134,7 +134,7 @@ func SetName() {
 		// and display error messages accordingly.
 		Validate(func(str string) error {
 			if strings.ReplaceAll(str, " ", "") == "" {
-				return errors.New("Your name cannot be empty!")
+				return errors.New("your name cannot be empty")
 			}
 			return nil
 		}).Run()
