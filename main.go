@@ -68,6 +68,53 @@ func convertToSymb(symbol rune) string {
 	return style.Render(string(symb))
 }
 
+// Text Adventure input stuff (pi in this case means Processed Input)
+// If it fails to find a command, pi will be used to show the command they sent
+// Commands are in 2 parts
+//
+// examine object
+// ^^^^^^^ ^^^^^^
+// Verb    Noun
+//
+// Nouns have to be 1 word, or else I will need to code in more things for handling more than 2 words
+func playerInput(roomTitle string) (pi string, err string) {
+	var input string
+
+	huh.NewInput().
+		Title(roomTitle).
+		Value(&input).
+		// Validating fields is easy. The form will mark erroneous fields
+		// and display error messages accordingly.
+		Validate(func(str string) error {
+			if strings.ReplaceAll(str, " ", "") == "" {
+				return errors.New("empty input")
+			}
+			return nil
+		}).Run()
+
+	wordsep := " "
+
+	before, after, found := strings.Cut(input, wordsep)
+
+	if found {
+		if before == "examine" || before == "look" {
+			pi = fmt.Sprintf("exam %v", after)
+		}
+	} else {
+		if input == "look" {
+			pi = "cls"
+		} else if input == "examine" {
+			pi = input
+			err = "\"examine\" requires an noun. (if you are trying to clear the screen use \"look\")"
+		} else {
+			pi = input
+			err = fmt.Sprintf("Failed to process command: %v", pi)
+		}
+	}
+
+	return pi, err
+}
+
 func debugMsg() {
 	var style = lipgloss.NewStyle()
 
@@ -156,7 +203,13 @@ func Pause() {
 }
 
 func RoomTemplate() {
-	fmt.Println("ho")
+	pi, err := playerInput("This is a room template")
+
+	if err != "" {
+		fmt.Println(err)
+	} else {
+		fmt.Println(pi)
+	}
 }
 
 func mainMenu() {
