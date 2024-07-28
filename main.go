@@ -77,7 +77,7 @@ func convertToSymb(symbol rune) string {
 	}
 }
 
-// Text Adventure input stuff (pi in this case means Processed Input)
+// Text Adventure input stuff (pi in this case means Processed Input, oi means original input)
 // If it fails to find a command, pi will be used to show the command they sent
 // Commands are in 2 parts
 //
@@ -86,12 +86,10 @@ func convertToSymb(symbol rune) string {
 // Verb    Noun
 //
 // Nouns have to be 1 word, or else I will need to code in more things for handling more than 2 words
-func playerInput(roomTitle string) (pi string, err string) {
-	var input string
-
+func playerInput(roomTitle string) (pi string, oi string, err string) {
 	huh.NewInput().
 		Title(roomTitle).
-		Value(&input).
+		Value(&oi).
 		// Validating fields is easy. The form will mark erroneous fields
 		// and display error messages accordingly.
 		Validate(func(str string) error {
@@ -101,7 +99,9 @@ func playerInput(roomTitle string) (pi string, err string) {
 			return nil
 		}).Run()
 
-	before, after, found := strings.Cut(input, " ")
+	oi = strings.ToLower(oi)
+
+	before, after, found := strings.Cut(oi, " ")
 
 	// TODO: Finish commands
 	if found {
@@ -109,18 +109,20 @@ func playerInput(roomTitle string) (pi string, err string) {
 			pi = fmt.Sprintf("exam %v", after)
 		}
 	} else {
-		if input == "look" {
+		if oi == "look" {
 			pi = "cls"
-		} else if input == "examine" {
-			pi = input
+		} else if oi == "examine" {
+			pi = oi
 			err = "\"examine\" requires an noun. (if you are trying to clear the screen use \"look\")"
+		} else if oi == "quit" || oi == "exit" {
+			pi = "exit"
 		} else {
-			pi = input
+			pi = oi
 			err = fmt.Sprintf("Failed to process command: %v", pi)
 		}
 	}
 
-	return pi, err
+	return
 }
 
 func debugMsg() {
@@ -211,12 +213,36 @@ func Pause() {
 }
 
 func RoomTemplate() {
-	pi, err := playerInput("This is a room template")
+	arrowInputStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#F780E2"))
+	inputStyle := lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "#02BA84", Dark: "#02BF87"})
+	errorStyle := lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "#FF4672", Dark: "#ED567A"})
 
-	if err != "" {
-		fmt.Println(err)
-	} else {
-		fmt.Println(pi)
+	CallClear()
+	for {
+		// Get Input
+		pi, oi, err := playerInput("This is a room template")
+
+		// Display Input
+		fmt.Println(arrowInputStyle.Render("> ") + inputStyle.Render(oi))
+
+		// Detect Error
+		if err != "" {
+			fmt.Println(errorStyle.Render(" * " + err))
+		} else {
+			fmt.Println(pi)
+		}
+
+		// Use Input
+		// TODO: Finish making commands
+		if oi == "quit" {
+			os.Exit(0)
+		}
+
+		if pi == "exit" {
+			os.Exit(0)
+		}
+
+		fmt.Println("")
 	}
 }
 
