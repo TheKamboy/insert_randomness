@@ -92,10 +92,9 @@ func playerInput(roomTitle string) (pi string, err string) {
 			return nil
 		}).Run()
 
-	wordsep := " "
+	before, after, found := strings.Cut(input, " ")
 
-	before, after, found := strings.Cut(input, wordsep)
-
+	// TODO: Finish commands
 	if found {
 		if before == "examine" || before == "look" {
 			pi = fmt.Sprintf("exam %v", after)
