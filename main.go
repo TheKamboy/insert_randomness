@@ -19,6 +19,9 @@ import (
 // debug mode will auto set name, and other things to make it quicker to test
 const DEBUG = true
 
+// Enables Nerd Fonts
+const NERD = true
+
 // Character Name
 var name string
 
@@ -59,13 +62,19 @@ func convertToSymb(symbol rune) string {
 	symb := symbol
 	foreground := lipgloss.Color("8")
 
-	if symb == 'O' {
-		symb = ''
+	if NERD {
+		if symb == 'O' {
+			symb = ''
+		}
 	}
 
 	style := lipgloss.NewStyle().Foreground(foreground)
 
-	return style.Render(string(symb))
+	if NERD {
+		return style.Render(string(symb))
+	} else {
+		return style.Render("")
+	}
 }
 
 // Text Adventure input stuff (pi in this case means Processed Input)
