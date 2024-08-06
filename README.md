@@ -6,5 +6,5 @@ The random text adventure.
 
 ## Credits
 
-**KamFurDev**: Creator
-**My Dad**: Some Character Ideas
+- **KamFurDev**: Creator
+- **My Dad**: Some Character Ideas
