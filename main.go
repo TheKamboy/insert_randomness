@@ -242,6 +242,10 @@ func RoomTemplate() {
 			os.Exit(0)
 		}
 
+    if pi == "cls" {
+      CallClear()
+    }
+
 		fmt.Println("")
 	}
 }

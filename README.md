@@ -7,6 +7,10 @@ The random text adventure.
 
 ![gif](out.gif)
 
+## Installation
+
+Open the [Releases Page](https://github.com/thekamboy/insert_randomness/releases)
+
 ## Credits
 
 - **KamFurDev**: Creator
