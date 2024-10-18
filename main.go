@@ -3,12 +3,13 @@ package main
 import (
 	"errors"
 	"fmt"
-	"golang.org/x/term"
 	"log"
 	"os"
 	"os/exec"
 	"runtime"
 	"strings"
+
+	"golang.org/x/term"
 
 	huh "github.com/charmbracelet/huh"
 
@@ -20,7 +21,7 @@ import (
 const DEBUG = true
 
 // Enables Nerd Fonts
-const NERD = true
+var NERD = true
 
 // Character Name
 var name string
@@ -71,7 +72,7 @@ func convertToSymb(symbol rune) string {
 	style := lipgloss.NewStyle().Foreground(foreground)
 
 	if NERD {
-		return style.Render(string(symb))
+		return style.Render(string(symb) + " ")
 	} else {
 		return style.Render("")
 	}
@@ -146,7 +147,7 @@ func optionsMenu() {
 		debugMsg()
 
 		style := lipgloss.NewStyle().
-			SetString(fmt.Sprintf("%v OPTIONS", convertToSymb('O'))).
+			SetString(fmt.Sprintf("%vOPTIONS", convertToSymb('O'))).
 			Padding(1).
 			Border(lipgloss.RoundedBorder(), true).
 			Align(lipgloss.Center)
@@ -158,10 +159,11 @@ func optionsMenu() {
 		huh.NewSelect[string]().
 			Options(
 				huh.NewOption("Set Name", "sn"),
+				huh.NewOption("Nerd Fonts", "nf"),
 				huh.NewOption("huh test", "ht"),
 				huh.NewOption("Go Back", "exit"),
 			).
-			Height(6).
+			Height(7).
 			Value(&menu).Run()
 
 		if menu == "exit" {
@@ -174,6 +176,8 @@ func optionsMenu() {
 			fmt.Println(style)
 
 			Pause()
+		} else if menu == "nf" {
+			nerdFontChecker()
 		} else if menu == "ht" {
 			huhtest()
 		}
@@ -242,12 +246,19 @@ func RoomTemplate() {
 			os.Exit(0)
 		}
 
-    if pi == "cls" {
-      CallClear()
-    }
+		if pi == "cls" {
+			CallClear()
+		}
 
 		fmt.Println("")
 	}
+}
+
+func nerdFontChecker() {
+	CallClear()
+	debugMsg()
+
+	huh.NewConfirm().Title("Can you see the box icon?: ").Description("This game uses Nerd Fonts for symbols, but you may disable them if you don't want to use them.").Value(&NERD).Run()
 }
 
 func mainMenu() {
@@ -313,5 +324,6 @@ func main() {
 		name = "Debug"
 	}
 
+	nerdFontChecker()
 	mainMenu()
 }
